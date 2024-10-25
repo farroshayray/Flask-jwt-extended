@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management System</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/logo.png') }}">
+    <!-- bootstrap -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>    
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="User Management Logo">
+        </div>
+        <strong class="usename-navbar">{{ username if username else '' }}</strong>
+        <ul class="nav-links">
+            <li><a href="{{ url_for('home') }}">Home</a></li>
+            {% if username %}
+            <li><a href="https://documenter.getpostman.com/view/37782623/2sAY4rFk8u" target="_blank" rel="noopener noreferrer">Documentation</a></li>
+            {% else %}
+            <li></li>
+            {% endif %}
+            <li><a href="#">API</a></li>
+            {% if username %}
+                <li><a href="{{ url_for('users') }}">User List</a></li>
+            {% else %}
+            {% endif %}
+            <li><a href="{{ url_for('about') }}">About</a></li>
+            {% if username %}
+                <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
+            {% else %}
+                <li><a href="{{ url_for('auth.login') }}">Login</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <!-- Header Section -->
+    <div class="header-container">
+        <h1 class="header-text">
+            Hello, {{ username if username else 'there' }}!
+        </h1>
+        <h2 class="h2-text">User and review Management API</h2>
+        <div class="link-container">
+            <div>
+                {% if username %}
+                    {% if logrole == 'Admin' %}
+                        <a href="{{url_for('reviews.review')}}" class="documentation">
+                            Go Review
+                        </a>
+                    {% else %}
+                        <a href="{{url_for('users')}}" class="documentation">
+                            See Users
+                        </a>
+                    {% endif %}
+                {% else %}
+                    <a href="{{url_for('auth.login')}}" class="documentation">
+                        Login
+                    </a>
+                {% endif %}            
+            </div>
+            {% if username %}
+                <p></p>
+            {% else %}
+                <p class="before-login">Please Login to see Documentation</p>
+            {% endif %}
+        </div>
+    </div>
+    <!--reviews-->
+    {% if logrole == 'Admin' %}
+        <div class="review-container">
+            <h2 class="existing-reviews">Existing Reviews by Rating</h2>
+        
+            {% for i in range(1, 6) %}
+                <!-- Judul Carousel berdasarkan Rating -->
+                <h3 class="carousel-title">
+                    {{ '⭐' * i }}
+                </h3>
+        
+                <!-- Carousel untuk setiap Rating -->
+                <div id="reviewCarousel{{ i }}" class="carousel slide" data-ride="carousel">
+                    <div class="carousel-inner">
+                        {% set reviews_by_rating = reviews | selectattr('rating', 'equalto', i) | list %}
+        
+                        {% if reviews_by_rating %}
+                            {% for review in reviews_by_rating %}
+                            <div class="carousel-item {% if loop.index == 1 %}active{% endif %}">
+                                <div class="review-item text-center">
+                                    <div class="review-header">
+                                        <span class="rating">⭐ {{ review.rating }}</span>
+                                    </div>
+                                    <strong class="review-email">{{ review.email }}</strong>
+                                    <p class="review-description">{{ review.description }}</p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="carousel-item active">
+                                <p class="no-reviews">No reviews available for this rating.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+        
+                    <!-- Carousel Controls -->
+                    <a class="carousel-control-prev" href="#reviewCarousel{{ i }}" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next" href="#reviewCarousel{{ i }}" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}        
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-info">
+            <div class="contact">
+                <h3>Contact Us</h3>
+                <p>Email: info@farrosmanagement.com</p>
+                <p>Phone: +62 812 3456 7890</p>
+            </div>
+            <div class="about">
+                <h3>About Us</h3>
+                <p>We provide a comprehensive API for managing user efficiently. Join us in protecting user data.</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 User Management API. All rights reserved.</p>
+        </div>
+    </footer>         
+</body>
+</html>

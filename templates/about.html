@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About This API</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/logo.png') }}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #f4f4f4;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #000000;
+            padding: 15px 30px;
+        }
+
+        .navbar .logo img {
+            height: 40px;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 20px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 1rem;
+            transition: color 0.3s ease-in-out;
+        }
+
+        .nav-links a:hover {
+            color: #f0a500;
+        }
+
+        /* About API Container */
+        .about-api-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        .about-api-container h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 2rem;
+            color: #333;
+        }
+
+        .about-api-container h2 {
+            margin-top: 30px;
+            margin-bottom: 10px;
+            color: #333;
+            border-bottom: 2px solid #f0a500;
+            display: inline-block;
+        }
+
+        .about-api-container pre {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* Footer Styles */
+        .footer {
+            background-color: #000000;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .footer-info {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .footer-info div {
+            margin: 10px;
+        }
+
+        .footer-info h3 {
+            color: white;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid white;
+            margin-top: 10px;
+            padding-top: 10px;
+        }
+
+        /* Button and Link Styles */
+        a {
+            transition: color 0.3s ease-in-out;
+        }
+
+        a:hover {
+            color: white;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                margin-top: 10px;
+            }
+
+            .nav-links li {
+                margin: 10px 0;
+            }
+
+            .about-api-container {
+                margin: 20px;
+                padding: 15px;
+            }
+
+            .footer-info {
+                flex-direction: column;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="User Management Logo">
+        </div>
+        <ul class="nav-links">
+            <li><a href="{{ url_for('home') }}">Home</a></li>
+            <li><a href="{{ url_for('about') }}">About API</a></li>
+            {% if username %}
+            <li><a href="https://documenter.getpostman.com/view/37782623/2sAY4rFk8u" target="_blank" rel="noopener noreferrer">Documentation</a></li>
+            {% else %}
+            <li></li>
+            {% endif %}
+            <li><a href="#">Contact</a></li>
+            {% if current_user.is_authenticated %}
+                <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
+            {% else %}
+                <li><a href="{{ url_for('auth.login') }}">Login</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <!-- About API Section -->
+    <div class="about-api-container">
+        <h1>About This API</h1>
+        <p>This User Management API provides functionalities to manage users and their reviews efficiently. Below are the details of the available features and the database schema used in this system.</p>
+
+        <h2>Features</h2>
+        <ul>
+            <li><strong>User Authentication:</strong> Users can register, login, and logout securely.</li>
+            <li><strong>Review Management:</strong> Users can post, update, and delete reviews about products or services.</li>
+            <li><strong>Protected Endpoints:</strong> Certain actions (like posting reviews) require users to be authenticated.</li>
+        </ul>
+
+        <h2>Database Overview</h2>
+        <h3>Users Table</h3>
+        <pre>
++------------+--------------+------------------+
+| Column     | Type         | Description      |
++------------+--------------+------------------+
+| id         | Integer (PK) | Unique User ID   |
+| username   | String       | Username         |
+| email      | String       | User Email       |
+| password   | String (Hash)| User Password    |
++------------+--------------+------------------+
+        </pre>
+
+        <h3>Reviews Table</h3>
+        <pre>
++------------+--------------+------------------------+
+| Column     | Type         | Description            |
++------------+--------------+------------------------+
+| id         | Integer (PK) | Unique Review ID       |
+| user_id    | Integer (FK) | ID of the Reviewer     |
+| content    | String       | Review Content         |
+| rating     | Integer      | Rating (1 to 5)        |
+| created_at | DateTime     | Timestamp of Creation  |
++------------+--------------+------------------------+
+        </pre>
+
+        <h2>API Endpoints</h2>
+        <ul>
+            <li><strong>POST /auth/register</strong> - Register a new user</li>
+            <li><strong>POST /auth/login</strong> - Login to the system</li>
+            <li><strong>POST /reviews</strong> - Add a new review (Authenticated)</li>
+            <li><strong>GET /reviews</strong> - Get all reviews</li>
+            <li><strong>DELETE /reviews/&lt;id&gt;</strong> - Delete a review (Authenticated)</li>
+        </ul>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-info">
+            <div class="contact">
+                <h3>Contact Us</h3>
+                <p>Email: info@farrosmanagement.com</p>
+                <p>Phone: +62 812 3456 7890</p>
+            </div>
+            <div class="about">
+                <h3>About Us</h3>
+                <p>We provide a comprehensive API for managing users and reviews efficiently. Join us in improving data management.</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 User Management API. All rights reserved.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
